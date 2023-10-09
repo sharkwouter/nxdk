@@ -59,6 +59,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Docker Image
         uses: docker/build-push-action@v3
+        if: github.ref == 'refs/heads/master' && matrix.tag == 'latest'
         with:
           push: true
           build-args: ${{ matrix.build-args }}
