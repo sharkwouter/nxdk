@@ -2,19 +2,15 @@
 
 # SPDX-FileCopyrightText: 2020-2022 Stefan Schmidt
 
-FROM ghcr.io/xboxdev/nxdk-buildbase:git-7c4eb218 AS builder
+FROM archlinux:base-devel
+
+RUN pacman -Syu --noconfirm llvm lld clang cmake git
 
 COPY ./ /usr/src/nxdk/
 ENV NXDK_DIR=/usr/src/nxdk
 RUN cd /usr/src/nxdk && make tools -j`nproc`
 ARG buildparams
 RUN eval $(./usr/src/nxdk/bin/activate -s); cd /usr/src/nxdk && make NXDK_ONLY=y $buildparams -j`nproc`
-
-
-FROM ghcr.io/xboxdev/nxdk-runbase:git-7c4eb218
-
-COPY --from=builder /usr/src/nxdk/ /usr/src/nxdk/
-ENV NXDK_DIR=/usr/src/nxdk
 
 WORKDIR /usr/src/app
 
